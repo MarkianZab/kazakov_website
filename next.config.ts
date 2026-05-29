@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ["prettier"],
+  serverExternalPackages: ["resend", "@react-email/render", "prettier"],
 };
 
 export default nextConfig;
