@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Playfair_Display } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { PostHogProvider } from "@/components/providers/PostHogProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,25 +18,23 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Mikhail Kazakov — Grandmaster & Chess Coach",
   description:
-    "Work with Grandmaster Mikhail Kazakov. Book private lessons, game analysis sessions, and tournament preparation.",
+    "Work with Grandmaster Mikhail Kazakov. Book private lessons and game analysis sessions.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+  const cookieStore = await cookies();
+  const locale = cookieStore.get("NEXT_LOCALE")?.value ?? "fr";
+  const lang = ["fr", "en", "uk"].includes(locale) ? locale : "fr";
+
   return (
     <html
-      lang="en"
+      lang={lang}
       className={`${geistSans.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <PostHogProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </PostHogProvider>
+        {children}
       </body>
     </html>
   );

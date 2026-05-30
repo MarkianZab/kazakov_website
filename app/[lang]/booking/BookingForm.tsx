@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import type { Dictionary } from "@/dictionaries/fr";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-export function BookingForm() {
+export function BookingForm({ dict }: { dict: Dictionary["booking"] }) {
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
 
@@ -45,73 +46,68 @@ export function BookingForm() {
       <div className="mt-6 flex flex-col items-center py-8 text-center">
         <span className="text-4xl">♟</span>
         <h3 className="mt-4 font-serif text-xl font-semibold text-[var(--foreground)]">
-          Request sent!
+          {dict.success.title}
         </h3>
         <p className="mt-2 max-w-sm text-sm text-[var(--foreground-muted)]">
-          Mikhail will get back to you within 24 hours to confirm your session
-          and share payment details.
+          {dict.success.message}
         </p>
       </div>
     );
   }
 
+  const f = dict.form;
+  const levelValues = ["Beginner (under 800)", "Intermediate (800–1500)", "Advanced (1500–2000)", "Expert (2000+)"];
+
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className={labelClass}>Full Name</label>
-          <input id="name" name="name" type="text" required className={inputClass} placeholder="Your name" />
+          <label htmlFor="name" className={lbl}>{f.name}</label>
+          <input id="name" name="name" type="text" required className={inp} placeholder={f.namePH} />
         </div>
         <div>
-          <label htmlFor="email" className={labelClass}>Email</label>
-          <input id="email" name="email" type="email" required className={inputClass} placeholder="you@example.com" />
-        </div>
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <div>
-          <label htmlFor="preferredDate" className={labelClass}>Preferred Date</label>
-          <input id="preferredDate" name="preferredDate" type="date" required className={inputClass} />
-        </div>
-        <div>
-          <label htmlFor="preferredTime" className={labelClass}>Preferred Time (Kyiv time)</label>
-          <input id="preferredTime" name="preferredTime" type="time" required className={inputClass} />
+          <label htmlFor="email" className={lbl}>{f.email}</label>
+          <input id="email" name="email" type="email" required className={inp} placeholder="you@example.com" />
         </div>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="platform" className={labelClass}>Platform</label>
-          <select id="platform" name="platform" required className={inputClass}>
-            <option value="">Choose…</option>
+          <label htmlFor="preferredDate" className={lbl}>{f.date}</label>
+          <input id="preferredDate" name="preferredDate" type="date" required className={inp} />
+        </div>
+        <div>
+          <label htmlFor="preferredTime" className={lbl}>{f.time}</label>
+          <input id="preferredTime" name="preferredTime" type="time" required className={inp} />
+        </div>
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label htmlFor="platform" className={lbl}>{f.platform}</label>
+          <select id="platform" name="platform" required className={inp}>
+            <option value="">{f.platformPH}</option>
             <option value="Zoom">Zoom</option>
             <option value="Microsoft Teams">Microsoft Teams</option>
           </select>
         </div>
         <div>
-          <label htmlFor="level" className={labelClass}>Your Chess Level</label>
-          <select id="level" name="level" required className={inputClass}>
-            <option value="">Choose…</option>
-            <option value="Beginner (under 800)">Beginner (under 800)</option>
-            <option value="Intermediate (800–1500)">Intermediate (800–1500)</option>
-            <option value="Advanced (1500–2000)">Advanced (1500–2000)</option>
-            <option value="Expert (2000+)">Expert (2000+)</option>
+          <label htmlFor="level" className={lbl}>{f.level}</label>
+          <select id="level" name="level" required className={inp}>
+            <option value="">{f.levelPH}</option>
+            {f.levels.map((label, i) => (
+              <option key={i} value={levelValues[i]}>{label}</option>
+            ))}
           </select>
         </div>
       </div>
 
       <div>
-        <label htmlFor="notes" className={labelClass}>
-          What would you like to work on?{" "}
-          <span className="text-[var(--foreground-muted)]">(optional)</span>
+        <label htmlFor="notes" className={lbl}>
+          {f.notes}{" "}
+          <span className="text-[var(--foreground-muted)]">{f.notesOptional}</span>
         </label>
-        <textarea
-          id="notes"
-          name="notes"
-          rows={3}
-          className={inputClass}
-          placeholder="Openings, endgames, tactics, general improvement…"
-        />
+        <textarea id="notes" name="notes" rows={3} className={inp} placeholder={f.notesPH} />
       </div>
 
       {status === "error" && (
@@ -119,12 +115,12 @@ export function BookingForm() {
       )}
 
       <Button type="submit" size="lg" disabled={status === "loading"} className="w-full sm:w-auto">
-        {status === "loading" ? "Sending request…" : "Request Session →"}
+        {status === "loading" ? f.sending : f.submit}
       </Button>
     </form>
   );
 }
 
-const labelClass = "mb-1.5 block text-sm font-medium text-[var(--foreground-muted)]";
-const inputClass =
+const lbl = "mb-1.5 block text-sm font-medium text-[var(--foreground-muted)]";
+const inp =
   "w-full rounded-sm border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2.5 text-sm text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)]/50 focus:border-[var(--gold)] transition-colors";

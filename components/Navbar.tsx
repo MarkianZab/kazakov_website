@@ -3,37 +3,52 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+import type { Locale } from "@/lib/locales";
 
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/bio", label: "About" },
-  { href: "/availability", label: "Availability" },
-  { href: "/contact", label: "Contact" },
-];
+type NavDict = {
+  home: string;
+  about: string;
+  availability: string;
+  contact: string;
+  book: string;
+};
 
-export function Navbar() {
+export function Navbar({ dict, locale }: { dict: NavDict; locale: Locale }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  const base = `/${locale}`;
+
+  const links = [
+    { href: base, label: dict.home },
+    { href: `${base}/bio`, label: dict.about },
+    { href: `${base}/availability`, label: dict.availability },
+    { href: `${base}/contact`, label: dict.contact },
+  ];
+
+  const isActive = (href: string) =>
+    href === base ? pathname === base : pathname.startsWith(href);
 
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--background)]/95 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between">
           <Link
-            href="/"
+            href={base}
             className="font-serif text-lg font-semibold tracking-wide text-[var(--gold)]"
           >
             M. Kazakov
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 md:flex">
+          <nav className="hidden items-center gap-5 md:flex">
             {links.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 className={`text-sm transition-colors hover:text-[var(--gold)] ${
-                  pathname === href
+                  isActive(href)
                     ? "text-[var(--gold)]"
                     : "text-[var(--foreground-muted)]"
                 }`}
@@ -42,11 +57,12 @@ export function Navbar() {
               </Link>
             ))}
             <Link
-              href="/booking"
+              href={`${base}/booking`}
               className="rounded-sm bg-[var(--gold)] px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-[var(--gold-hover)]"
             >
-              Book a Session
+              {dict.book}
             </Link>
+            <LanguageSwitcher currentLocale={locale} />
           </nav>
 
           {/* Mobile menu button */}
@@ -76,7 +92,7 @@ export function Navbar() {
                 href={href}
                 onClick={() => setOpen(false)}
                 className={`text-sm transition-colors hover:text-[var(--gold)] ${
-                  pathname === href
+                  isActive(href)
                     ? "text-[var(--gold)]"
                     : "text-[var(--foreground-muted)]"
                 }`}
@@ -85,12 +101,13 @@ export function Navbar() {
               </Link>
             ))}
             <Link
-              href="/booking"
+              href={`${base}/booking`}
               onClick={() => setOpen(false)}
               className="inline-block w-fit rounded-sm bg-[var(--gold)] px-4 py-2 text-sm font-medium text-black hover:bg-[var(--gold-hover)]"
             >
-              Book a Session
+              {dict.book}
             </Link>
+            <LanguageSwitcher currentLocale={locale} />
           </nav>
         )}
       </div>

@@ -1,28 +1,44 @@
+import { notFound } from "next/navigation";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { LinkButton } from "@/components/ui/Button";
+import { getDictionary, hasLocale, type Locale } from "../dictionaries";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "About Mikhail Kazakov — Grandmaster & Chess Coach",
-  description:
-    "Learn about Mikhail Kazakov's chess career, achievements, and coaching philosophy.",
-};
+type Props = { params: Promise<{ lang: string }> };
 
 const achievements = [
-  "[PLACEHOLDER: Tournament win or title, e.g. 'Champion, European Club Cup 20XX']",
+  "[PLACEHOLDER: Tournament win or title]",
   "[PLACEHOLDER: Another achievement]",
   "[PLACEHOLDER: Another achievement]",
   "[PLACEHOLDER: Another achievement]",
 ];
 
-export default function BioPage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title:
+      lang === "fr"
+        ? "À propos de Mikhail Kazakov — Grand Maître & Coach"
+        : lang === "uk"
+          ? "Про Михайла Казакова — Гросмейстер і тренер"
+          : "About Mikhail Kazakov — Grandmaster & Chess Coach",
+  };
+}
+
+export default async function BioPage({ params }: Props) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+
+  const dict = await getDictionary(lang as Locale);
+  const d = dict.bio;
+  const base = `/${lang}`;
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-      {/* Header */}
       <SectionHeader
-        label="About"
+        label={d.label}
         title="Mikhail Kazakov"
-        subtitle="FIDE Grandmaster · Chess Coach"
+        subtitle={d.subtitle}
       />
 
       <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_2fr]">
@@ -33,38 +49,29 @@ export default function BioPage() {
           </div>
           <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-4">
             <p className="text-xs uppercase tracking-widest text-[var(--foreground-muted)]">
-              FIDE Rating
+              {d.rating}
             </p>
             <p className="font-serif text-2xl font-bold text-[var(--gold)]">
               [PLACEHOLDER: e.g. 2610]
             </p>
             <p className="mt-3 text-xs uppercase tracking-widest text-[var(--foreground-muted)]">
-              Title
+              {d.titleLabel}
             </p>
             <p className="font-medium text-[var(--foreground)]">
-              Grandmaster (GM)
+              {d.grandmaster}
             </p>
           </div>
         </div>
 
         {/* Bio text */}
         <div className="space-y-6 text-[var(--foreground-muted)] leading-relaxed">
-          <p>
-            [PLACEHOLDER: Opening paragraph — background, where Mikhail grew
-            up, when he started playing chess, early influences.]
-          </p>
-          <p>
-            [PLACEHOLDER: Chess career paragraph — titles earned, notable
-            tournaments, peak rating, international experience.]
-          </p>
-          <p>
-            [PLACEHOLDER: Coaching transition paragraph — when and why Mikhail
-            started coaching, who he coaches, approach.]
-          </p>
+          <p>{d.placeholderOpening}</p>
+          <p>{d.placeholderCareer}</p>
+          <p>{d.placeholderCoaching}</p>
 
           <div>
             <h3 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-3">
-              Notable Achievements
+              {d.achievementsTitle}
             </h3>
             <ul className="space-y-2">
               {achievements.map((item, i) => (
@@ -78,18 +85,14 @@ export default function BioPage() {
 
           <div>
             <h3 className="font-serif text-xl font-semibold text-[var(--foreground)] mb-3">
-              Coaching Philosophy
+              {d.philosophyTitle}
             </h3>
-            <p>
-              [PLACEHOLDER: 2–3 sentences on coaching style — e.g.
-              "Mikhail believes every player has a unique style worth
-              developing…"]
-            </p>
+            <p>{d.philosophyText}</p>
           </div>
 
           <div className="pt-4">
-            <LinkButton href="/booking" size="lg">
-              Book a Session
+            <LinkButton href={`${base}/booking`} size="lg">
+              {d.book}
             </LinkButton>
           </div>
         </div>

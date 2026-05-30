@@ -1,27 +1,39 @@
+import { notFound } from "next/navigation";
 import { SectionHeader } from "@/components/ui/SectionHeader";
+import { getDictionary, hasLocale, type Locale } from "../dictionaries";
 import { ContactForm } from "./ContactForm";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Contact — Mikhail Kazakov",
-  description: "Get in touch with Grandmaster Mikhail Kazakov.",
-};
+type Props = { params: Promise<{ lang: string }> };
 
-export default function ContactPage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title:
+      lang === "fr"
+        ? "Contact — Mikhail Kazakov"
+        : lang === "uk"
+          ? "Контакт — Mikhail Kazakov"
+          : "Contact — Mikhail Kazakov",
+  };
+}
+
+export default async function ContactPage({ params }: Props) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+
+  const dict = await getDictionary(lang as Locale);
+  const d = dict.contact;
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-      <SectionHeader
-        label="Contact"
-        title="Get in Touch"
-        subtitle="Have a question or want to discuss lessons? Send a message and Mikhail will get back to you within 48 hours."
-      />
+      <SectionHeader label={d.label} title={d.title} subtitle={d.subtitle} />
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.5fr]">
-        {/* Contact info */}
         <div className="space-y-6">
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-[var(--foreground-muted)]">
-              Email
+              {d.emailLabel}
             </p>
             <a
               href="mailto:[PLACEHOLDER: mikhail@yourdomain.com]"
@@ -33,16 +45,16 @@ export default function ContactPage() {
 
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-[var(--foreground-muted)]">
-              Response Time
+              {d.responseLabel}
             </p>
             <p className="mt-1 text-sm text-[var(--foreground-muted)]">
-              Within 48 hours
+              {d.responseTime}
             </p>
           </div>
 
           <div>
             <p className="text-xs font-medium uppercase tracking-widest text-[var(--foreground-muted)]">
-              Chess Profiles
+              {d.profilesLabel}
             </p>
             <div className="mt-2 flex flex-col gap-1.5">
               <a
@@ -67,15 +79,14 @@ export default function ContactPage() {
                 rel="noopener noreferrer"
                 className="text-sm text-[var(--foreground-muted)] hover:text-[var(--gold)]"
               >
-                FIDE Profile →
+                FIDE →
               </a>
             </div>
           </div>
         </div>
 
-        {/* Form */}
         <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-6">
-          <ContactForm />
+          <ContactForm dict={d} />
         </div>
       </div>
     </div>

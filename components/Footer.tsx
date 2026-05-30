@@ -1,6 +1,40 @@
 import Link from "next/link";
+import type { Locale } from "@/lib/locales";
 
-export function Footer() {
+type FooterDict = {
+  tagline: string;
+  navigation: string;
+  findMe: string;
+  rights: string;
+};
+
+type NavDict = {
+  home: string;
+  about: string;
+  availability: string;
+  contact: string;
+  book: string;
+};
+
+export function Footer({
+  dict,
+  nav,
+  locale,
+}: {
+  dict: FooterDict;
+  nav: NavDict;
+  locale: Locale;
+}) {
+  const base = `/${locale}`;
+
+  const navLinks = [
+    { href: base, label: nav.home },
+    { href: `${base}/bio`, label: nav.about },
+    { href: `${base}/booking`, label: nav.book },
+    { href: `${base}/availability`, label: nav.availability },
+    { href: `${base}/contact`, label: nav.contact },
+  ];
+
   return (
     <footer className="border-t border-[var(--border)] bg-[var(--surface)]">
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -10,22 +44,16 @@ export function Footer() {
               Mikhail Kazakov
             </p>
             <p className="mt-2 text-sm text-[var(--foreground-muted)]">
-              Grandmaster & Chess Coach
+              {dict.tagline}
             </p>
           </div>
 
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-[var(--foreground-muted)]">
-              Navigation
+              {dict.navigation}
             </p>
             <ul className="mt-3 space-y-2">
-              {[
-                { href: "/", label: "Home" },
-                { href: "/bio", label: "About" },
-                { href: "/booking", label: "Book a Session" },
-                { href: "/availability", label: "Availability" },
-                { href: "/contact", label: "Contact" },
-              ].map(({ href, label }) => (
+              {navLinks.map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}
@@ -40,7 +68,7 @@ export function Footer() {
 
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-[var(--foreground-muted)]">
-              Find Me
+              {dict.findMe}
             </p>
             <ul className="mt-3 space-y-2">
               <li>
@@ -68,7 +96,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-[var(--border)] pt-6 text-center text-xs text-[var(--foreground-muted)]">
-          © {new Date().getFullYear()} Mikhail Kazakov. All rights reserved.
+          © {new Date().getFullYear()} Mikhail Kazakov. {dict.rights}
         </div>
       </div>
     </footer>
