@@ -10,7 +10,6 @@ function getPreferredLocale(request: NextRequest): Locale {
     return cookieLocale as Locale;
   }
   const acceptLang = request.headers.get("accept-language") ?? "";
-  if (/\buk\b/i.test(acceptLang)) return "uk";
   if (/\ben\b/i.test(acceptLang) && !/\bfr\b/i.test(acceptLang)) return "en";
   return "fr";
 }

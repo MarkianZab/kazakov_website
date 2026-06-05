@@ -23,7 +23,6 @@ export function Navbar({ dict, locale }: { dict: NavDict; locale: Locale }) {
   const links = [
     { href: base, label: dict.home },
     { href: `${base}/bio`, label: dict.about },
-    { href: `${base}/availability`, label: dict.availability },
     { href: `${base}/contact`, label: dict.contact },
   ];
 
