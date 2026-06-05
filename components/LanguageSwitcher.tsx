@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { locales, type Locale } from "@/lib/locales";
 
-const labels: Record<Locale, string> = { fr: "FR", en: "EN", uk: "УК" };
+const labels: Record<Locale, string> = { fr: "FR", en: "EN" };
 
 export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
   const pathname = usePathname();

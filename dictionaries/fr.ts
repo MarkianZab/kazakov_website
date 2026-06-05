@@ -76,6 +76,8 @@ const fr = {
     title: "Réserver une session",
     subtitle: "Choisissez un créneau disponible et réservez en quelques secondes.",
     firstFree: "Votre première leçon est entièrement gratuite — aucun paiement nécessaire pour commencer.",
+    firstFreeHeadline: "Première leçon gratuite",
+    firstFreeSub: "Aucun paiement requis. Réservez, rencontrez Mikhail, et décidez ensuite.",
     sessionName: "Leçon privée individuelle",
     sessionDetails: "90 minutes · Zoom ou Microsoft Teams",
     sessionPrice: "50 $",

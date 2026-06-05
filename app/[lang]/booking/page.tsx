@@ -42,10 +42,15 @@ export default async function BookingPage({ params }: Props) {
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
       <SectionHeader label={d.label} title={d.title} subtitle={d.subtitle} />
 
-      {/* Free first lesson banner */}
-      <div className="mt-6 flex items-center gap-2 rounded-md border border-[var(--gold)]/30 bg-[var(--gold)]/10 px-4 py-3 text-sm text-[var(--gold)]">
-        <span>🎁</span>
-        <span>{d.firstFree}</span>
+      {/* Free first lesson — prominent banner */}
+      <div className="mt-8 rounded-lg border-2 border-[var(--gold)] bg-[var(--gold)]/10 px-6 py-8 text-center">
+        <p className="text-4xl">🎁</p>
+        <p className="mt-3 font-serif text-2xl font-bold text-[var(--gold)] sm:text-3xl">
+          {d.firstFreeHeadline}
+        </p>
+        <p className="mt-2 text-sm text-[var(--foreground-muted)]">
+          {d.firstFreeSub}
+        </p>
       </div>
 
       {/* Session info */}

@@ -77,6 +77,8 @@ const en: Dictionary = {
     title: "Book a Session",
     subtitle: "Pick an available slot and book instantly.",
     firstFree: "Your first lesson is completely free — no payment needed to get started.",
+    firstFreeHeadline: "First lesson is free",
+    firstFreeSub: "No payment required. Book a session, meet Mikhail, and decide from there.",
     sessionName: "1-on-1 Private Lesson",
     sessionDetails: "90 minutes · Zoom or Microsoft Teams",
     sessionPrice: "$50",
