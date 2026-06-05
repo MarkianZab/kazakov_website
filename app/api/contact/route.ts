@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getResend, FROM_EMAIL, COACH_EMAIL } from "@/lib/resend";
+import { getServerPostHog } from "@/lib/posthog";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -25,6 +26,14 @@ export async function POST(req: NextRequest) {
     console.error("Resend error:", error);
     return NextResponse.json({ error: "Failed to send message." }, { status: 500 });
   }
+
+  const posthog = getServerPostHog();
+  posthog.capture({
+    distinctId: email,
+    event: "contact_message_received",
+    properties: { subject },
+  });
+  await posthog.shutdown();
 
   return NextResponse.json({ ok: true });
 }

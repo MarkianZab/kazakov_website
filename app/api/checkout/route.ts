@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe, SESSION_TYPES } from "@/lib/stripe";
+import { getServerPostHog } from "@/lib/posthog";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -47,6 +48,19 @@ export async function POST(req: NextRequest) {
     success_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/booking`,
   });
+
+  const posthog = getServerPostHog();
+  posthog.capture({
+    distinctId: email,
+    event: "checkout_initiated",
+    properties: {
+      session_type: sessionType,
+      amount_cents: session.price,
+      preferred_date: preferredDate,
+      stripe_checkout_id: checkout.id,
+    },
+  });
+  await posthog.shutdown();
 
   return NextResponse.json({ url: checkout.url });
 }

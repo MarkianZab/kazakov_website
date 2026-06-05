@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { getServiceClient } from "@/lib/supabase";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
+import { getServerPostHog } from "@/lib/posthog";
 import Stripe from "stripe";
 
 export async function POST(req: NextRequest) {
@@ -62,6 +63,18 @@ export async function POST(req: NextRequest) {
       subject: `New Booking: ${sessionType} with ${studentName}`,
       text: `New booking received.\n\nStudent: ${studentName} (${studentEmail})\nSession: ${sessionType}\nDate: ${preferredDate} at ${preferredTime} ET\nNotes: ${notes || "None"}\nStripe Session: ${session.id}`,
     });
+
+    const posthog = getServerPostHog();
+    posthog.capture({
+      distinctId: studentEmail,
+      event: "booking_payment_completed",
+      properties: {
+        session_type: sessionType,
+        preferred_date: preferredDate,
+        stripe_session_id: session.id,
+      },
+    });
+    await posthog.shutdown();
   }
 
   return NextResponse.json({ received: true });

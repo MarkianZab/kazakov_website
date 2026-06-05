@@ -1,4 +1,13 @@
-import type { Booking } from "./page";
+type Booking = {
+  id: string;
+  student_name: string;
+  student_email: string;
+  session_type: string;
+  preferred_date: string;
+  preferred_time: string;
+  paid: boolean;
+  created_at: string;
+};
 
 const SESSION_LABELS: Record<string, string> = {
   solo_60: "1-on-1 (60 min)",

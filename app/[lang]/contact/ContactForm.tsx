@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/dictionaries/fr";
 
@@ -31,9 +32,13 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Something went wrong.");
+      posthog.capture("contact_submitted");
       setStatus("success");
     } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
+      const message = err instanceof Error ? err.message : "Something went wrong.";
+      posthog.capture("contact_submission_failed", { error: message });
+      posthog.captureException(err);
+      setErrorMsg(message);
       setStatus("error");
     }
   }

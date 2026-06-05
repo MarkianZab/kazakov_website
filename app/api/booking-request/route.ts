@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getResend, FROM_EMAIL } from "@/lib/resend";
 import { getServiceClient } from "@/lib/supabase";
+import { getServerPostHog } from "@/lib/posthog";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -66,6 +67,18 @@ export async function POST(req: NextRequest) {
       `See you on the board!`,
     ].join("\n"),
   });
+
+  const posthog = getServerPostHog();
+  posthog.capture({
+    distinctId: email,
+    event: "booking_request_received",
+    properties: {
+      level,
+      platform,
+      preferred_date: preferredDate,
+    },
+  });
+  await posthog.shutdown();
 
   return NextResponse.json({ ok: true });
 }

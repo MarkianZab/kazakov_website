@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import posthog from "posthog-js";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { Button } from "@/components/ui/Button";
 
@@ -23,10 +24,14 @@ export function LoginForm() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
+      posthog.capture("admin_login_failed", { error: error.message });
       setError(error.message || "Invalid email or password.");
       setLoading(false);
       return;
     }
+
+    posthog.identify(email, { email, role: "admin" });
+    posthog.capture("admin_signed_in");
 
     router.push("/admin/dashboard");
     router.refresh();

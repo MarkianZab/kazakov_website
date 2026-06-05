@@ -1,40 +1,26 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
-import { AvailabilityEditor } from "./AvailabilityEditor";
+import { ScheduleEditor } from "./ScheduleEditor";
 import { SettingsForm } from "./SettingsForm";
 import { BookingsTable } from "./BookingsTable";
 import { LogoutButton } from "./LogoutButton";
 import type { Metadata } from "next";
+import type { BookableSlot } from "./ScheduleEditor";
 
 export const metadata: Metadata = { title: "Admin Dashboard — Kazakov Chess" };
-
-export type Slot = {
-  id: string;
-  day_of_week: number;
-  hour: number;
-  available: boolean;
-};
-
-export type Booking = {
-  id: string;
-  student_name: string;
-  student_email: string;
-  session_type: string;
-  preferred_date: string;
-  preferred_time: string;
-  paid: boolean;
-  created_at: string;
-};
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
 
-  const [{ data: slots }, { data: settings }, { data: bookings }] =
+  const today = new Date().toISOString().split("T")[0];
+
+  const [{ data: bookableSlots }, { data: settings }, { data: bookings }] =
     await Promise.all([
       supabase
-        .from("availability_slots")
-        .select("*")
-        .order("day_of_week")
-        .order("hour"),
+        .from("bookable_slots")
+        .select("id, slot_date, slot_hour, booked, student_name, student_email")
+        .gte("slot_date", today)
+        .order("slot_date")
+        .order("slot_hour"),
       supabase.from("settings").select("key, value"),
       supabase
         .from("bookings")
@@ -62,12 +48,15 @@ export default async function DashboardPage() {
       </div>
 
       <div className="mt-10 space-y-12">
-        {/* Availability */}
+        {/* Schedule */}
         <section>
-          <h2 className="mb-5 font-serif text-xl font-semibold text-[var(--foreground)]">
-            Availability
+          <h2 className="mb-2 font-serif text-xl font-semibold text-[var(--foreground)]">
+            Schedule
           </h2>
-          <AvailabilityEditor slots={(slots as Slot[]) ?? []} />
+          <p className="mb-5 text-sm text-[var(--foreground-muted)]">
+            Add slots to your schedule. Students can book them instantly — you&apos;ll get an email for each booking.
+          </p>
+          <ScheduleEditor slots={(bookableSlots as BookableSlot[]) ?? []} />
         </section>
 
         {/* Notification email */}
@@ -81,13 +70,15 @@ export default async function DashboardPage() {
           <SettingsForm currentEmail={notificationEmail} />
         </section>
 
-        {/* Bookings */}
-        <section>
-          <h2 className="mb-5 font-serif text-xl font-semibold text-[var(--foreground)]">
-            Recent Bookings
-          </h2>
-          <BookingsTable bookings={(bookings as Booking[]) ?? []} />
-        </section>
+        {/* Legacy bookings */}
+        {bookings && bookings.length > 0 && (
+          <section>
+            <h2 className="mb-5 font-serif text-xl font-semibold text-[var(--foreground)]">
+              Contact Form Submissions
+            </h2>
+            <BookingsTable bookings={bookings} />
+          </section>
+        )}
       </div>
     </div>
   );
