@@ -4,7 +4,7 @@
 
 ## Project Overview
 
-A professional website for chess coach **Mikhail Kazakov** (grandmaster). The site serves as his public presence: bio, lesson booking, availability calendar, and contact info.
+A professional website for chess coach **Mikhail Kazakov** (grandmaster). The site serves as his public presence: bio, lesson booking, and contact info, in French and English.
 
 ## Tech Stack
 
@@ -12,9 +12,9 @@ A professional website for chess coach **Mikhail Kazakov** (grandmaster). The si
 |---|---|
 | Framework | Next.js (App Router) + TypeScript |
 | Styling | Tailwind CSS |
-| Auth + Database | Supabase |
-| Payments | Stripe |
-| Email | Resend |
+| Booking | Cal.com (hosted, embedded inline) |
+| Payments | Off-site (PayPal, bank card), arranged after the free first lesson |
+| Email | Resend (contact form) |
 | Analytics | PostHog |
 | Deployment | Vercel |
 | Domain | Porkbun |
@@ -41,6 +41,8 @@ A professional website for chess coach **Mikhail Kazakov** (grandmaster). The si
 
 ## Pages
 
+Every page lives under `/[lang]` (`fr`, `en`); `proxy.ts` redirects bare paths using the `NEXT_LOCALE` cookie or the browser language.
+
 ### `/` — Home / Hero
 - Full-viewport hero: Mikhail's name, title ("Grandmaster & Chess Coach"), CTA buttons ("Book a Session", "Learn More")
 - Brief intro (2–3 sentences)
@@ -54,16 +56,10 @@ A professional website for chess coach **Mikhail Kazakov** (grandmaster). The si
 - Credentials and notable tournament results
 
 ### `/booking` — Book a Session
-- Session types: 1-on-1 lesson, group lesson, game analysis, tournament prep
-- Pricing per session type (stored in Supabase or hardcoded)
-- Booking form: name, email, session type, preferred dates/times, notes
-- Payment via Stripe Checkout on form submission
-- Confirmation email sent via Resend after successful payment
-
-### `/availability` — Availability
-- Weekly schedule grid showing open time slots (data from Supabase)
-- Timezone note (display coach's local timezone)
-- CTA linking to /booking
+- Service picker with five lesson types; durations, prices and Cal.com slugs come from `lib/services.ts`, names and descriptions from the dictionaries.
+- Bookable types (private lesson, training game, group lesson) open an inline Cal.com calendar for that event type.
+- Simul and tournament support show a "Contact Mikhail" button instead of a calendar.
+- Cal.com owns availability, booking rules, and confirmation and cancellation emails.
 
 ### `/contact` — Contact
 - Contact form: name, email, subject, message
@@ -76,50 +72,46 @@ A professional website for chess coach **Mikhail Kazakov** (grandmaster). The si
 ```
 kazakov_website/
 ├── app/
-│   ├── layout.tsx
-│   ├── page.tsx                    # Home / Hero
-│   ├── bio/page.tsx
-│   ├── booking/page.tsx
-│   ├── availability/page.tsx
-│   ├── contact/page.tsx
-│   └── api/
-│       ├── contact/route.ts        # Sends email via Resend
-│       └── webhooks/stripe/route.ts
-├── components/
-│   ├── Navbar.tsx
-│   ├── Footer.tsx
-│   └── ui/                         # Button, Card, SectionHeader, etc.
+│   ├── layout.tsx                  # Root html/body and fonts
+│   ├── globals.css
+│   ├── [lang]/
+│   │   ├── layout.tsx              # Navbar, Footer, dictionary loading
+│   │   ├── dictionaries.ts
+│   │   ├── page.tsx                # Home / Hero
+│   │   ├── bio/page.tsx
+│   │   ├── booking/                # page, ServicePicker, CalBooker
+│   │   └── contact/                # page, ContactForm
+│   └── api/contact/route.ts        # Sends email via Resend
+├── components/                     # Navbar, Footer, LanguageSwitcher, ui/
+├── dictionaries/                   # fr.ts defines the Dictionary type; en.ts follows it
 ├── lib/
-│   ├── supabase.ts
-│   ├── stripe.ts
+│   ├── services.ts                 # Lesson types, durations, prices, Cal.com slugs
+│   ├── locales.ts
+│   ├── links.ts                    # Contact email, Chess.com and FIDE URLs
 │   ├── resend.ts
-│   └── posthog.ts
-├── public/images/
-├── styles/globals.css
-├── tailwind.config.ts
-└── next.config.ts
+│   └── posthog.ts                  # Server-side PostHog client
+├── instrumentation-client.ts       # PostHog browser init
+├── proxy.ts                        # Locale redirect (Next 16 name for middleware)
+└── docs/BOOKING_PLAN.md            # Cal.com migration plan and account setup
 ```
 
 ## Integrations
 
-### Supabase
-- Use `@supabase/supabase-js` with the App Router server client pattern (`@supabase/ssr`).
-- Store: availability slots, booking records.
-- Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
-
-### Stripe
-- Session booking triggers a Stripe Checkout session (server-side API route).
-- Handle `checkout.session.completed` webhook to mark booking confirmed in Supabase.
-- Env vars: `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`.
+### Cal.com
+- Mikhail's hosted Cal.com account owns availability (date overrides), event types, booking rules, and confirmation and cancellation emails.
+- In `lib/services.ts`, `CAL_USERNAME` must be his Cal.com username, each `calSlug` an event type slug, and each `durationMin` that event's length.
+- `app/[lang]/booking/CalBooker.tsx` embeds one event type with `@calcom/embed-react` and sends `lesson_booked` to PostHog when Cal.com reports a booking.
+- Account setup steps: "Cal.com setup with Mikhail" in `docs/BOOKING_PLAN.md`.
 
 ### Resend
-- Send booking confirmation emails and contact form notifications.
+- Sends contact form messages to `COACH_EMAIL`, with `replyTo` set to the sender.
 - Use React Email templates.
-- Env var: `RESEND_API_KEY`.
+- Env vars: `RESEND_API_KEY`, `COACH_EMAIL`, `RESEND_FROM_EMAIL` (optional, defaults to `onboarding@resend.dev`).
+- Until a domain is verified in Resend, `COACH_EMAIL` must be the Resend account owner's address.
 
 ### PostHog
-- Initialize in `app/layout.tsx` as a client-side provider.
-- Track page views and key events (booking started, booking completed, contact submitted).
+- Initialized in `instrumentation-client.ts`; browser traffic goes through the `/ingest` rewrite in `next.config.ts`.
+- Track page views and key events: `service_selected`, `lesson_booked`, `contact_submitted`.
 - Env vars: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`.
 
 ## Component Conventions
@@ -131,7 +123,7 @@ kazakov_website/
 ## Forms & Validation
 
 - Client-side validation on all forms (required fields, email format).
-- API routes re-validate server-side before sending emails or hitting Stripe.
+- API routes re-validate server-side before sending emails.
 - Show success/error state in-page after submission.
 
 ## Content Placeholders

@@ -1,7 +1,5 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { locales, hasLocale, defaultLocale, type Locale } from "@/lib/locales";
-import { isAdminEmail } from "@/lib/admin";
 
 function getPreferredLocale(request: NextRequest): Locale {
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
@@ -28,54 +26,6 @@ function getPreferredLocale(request: NextRequest): Locale {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── Admin routes: Supabase auth check ──────────────────────────────────────
-  if (pathname.startsWith("/admin")) {
-    let supabaseResponse = NextResponse.next({ request });
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll();
-          },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
-            );
-            supabaseResponse = NextResponse.next({ request });
-            cookiesToSet.forEach(({ name, value, options }) =>
-              supabaseResponse.cookies.set(name, value, options)
-            );
-          },
-        },
-      }
-    );
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    // Being authenticated is not enough — the account must be an allowlisted
-    // admin. This blocks anyone who self-registers against the public project.
-    const isAdmin = isAdminEmail(user?.email);
-    const isLoginPath = pathname === "/admin/login";
-
-    if (!isAdmin && !isLoginPath) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin/login";
-      return NextResponse.redirect(url);
-    }
-    if (isAdmin && isLoginPath) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/admin/dashboard";
-      return NextResponse.redirect(url);
-    }
-    return supabaseResponse;
-  }
-
-  // ── Public routes: locale routing ──────────────────────────────────────────
   const pathnameHasLocale = locales.some(
     (l) => pathname.startsWith(`/${l}/`) || pathname === `/${l}`
   );
