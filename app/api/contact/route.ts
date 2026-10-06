@@ -13,6 +13,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
   }
 
+  if (!COACH_EMAIL) {
+    console.error("COACH_EMAIL is not set, so the contact message was not sent.");
+    return NextResponse.json({ error: "Email is not configured." }, { status: 500 });
+  }
+
   const resend = getResend();
   const { error } = await resend.emails.send({
     from: FROM_EMAIL,
