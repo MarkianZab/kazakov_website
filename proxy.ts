@@ -1,20 +1,31 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-
-const locales = ["fr", "en"] as const;
-type Locale = (typeof locales)[number];
+import { locales, hasLocale, defaultLocale, type Locale } from "@/lib/locales";
+import { isAdminEmail } from "@/lib/admin";
 
 function getPreferredLocale(request: NextRequest): Locale {
   const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
-  if (cookieLocale && (locales as readonly string[]).includes(cookieLocale)) {
-    return cookieLocale as Locale;
+  if (cookieLocale && hasLocale(cookieLocale)) return cookieLocale;
+
+  // Pick the supported locale the browser ranks highest; ties keep header order
+  const header = request.headers.get("accept-language") ?? "";
+  let best: Locale = defaultLocale;
+  let bestQ = 0;
+  for (const part of header.split(",")) {
+    const [tag, ...params] = part.trim().split(";");
+    const lang = tag.trim().slice(0, 2).toLowerCase();
+    if (!hasLocale(lang)) continue;
+    const qParam = params.find((p) => p.trim().startsWith("q="));
+    const q = qParam ? parseFloat(qParam.split("=")[1]) || 0 : 1;
+    if (q > bestQ) {
+      bestQ = q;
+      best = lang;
+    }
   }
-  const acceptLang = request.headers.get("accept-language") ?? "";
-  if (/\ben\b/i.test(acceptLang) && !/\bfr\b/i.test(acceptLang)) return "en";
-  return "fr";
+  return best;
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // ── Admin routes: Supabase auth check ──────────────────────────────────────
@@ -46,14 +57,17 @@ export async function middleware(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Being authenticated is not enough — the account must be an allowlisted
+    // admin. This blocks anyone who self-registers against the public project.
+    const isAdmin = isAdminEmail(user?.email);
     const isLoginPath = pathname === "/admin/login";
 
-    if (!user && !isLoginPath) {
+    if (!isAdmin && !isLoginPath) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/login";
       return NextResponse.redirect(url);
     }
-    if (user && isLoginPath) {
+    if (isAdmin && isLoginPath) {
       const url = request.nextUrl.clone();
       url.pathname = "/admin/dashboard";
       return NextResponse.redirect(url);
@@ -91,5 +105,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|favicon\\.ico|.*\\..*).*)" ],
+  matcher: ["/((?!_next|api|ingest|favicon\\.ico|.*\\..*).*)"],
 };

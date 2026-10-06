@@ -1,20 +1,15 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Locale } from "@/lib/locales";
+import type { Dictionary } from "@/dictionaries/fr";
+import {
+  CHESSCOM_PROFILE_URL,
+  CONTACT_EMAIL,
+  FIDE_PROFILE_URL,
+} from "@/lib/links";
 
-type FooterDict = {
-  tagline: string;
-  navigation: string;
-  findMe: string;
-  rights: string;
-};
-
-type NavDict = {
-  home: string;
-  about: string;
-  availability: string;
-  contact: string;
-  book: string;
-};
+type FooterDict = Dictionary["footer"];
+type NavDict = Dictionary["nav"];
 
 export function Footer({
   dict,
@@ -31,7 +26,6 @@ export function Footer({
     { href: base, label: nav.home },
     { href: `${base}/bio`, label: nav.about },
     { href: `${base}/booking`, label: nav.book },
-    { href: `${base}/availability`, label: nav.availability },
     { href: `${base}/contact`, label: nav.contact },
   ];
 
@@ -40,7 +34,15 @@ export function Footer({
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
           <div>
-            <p className="font-serif text-lg font-semibold text-[var(--gold)]">
+            <Image
+              src="/images/logo.png"
+              alt=""
+              width={775}
+              height={532}
+              sizes="82px"
+              className="h-14 w-auto"
+            />
+            <p className="mt-3 font-serif text-lg font-semibold text-[var(--gold)]">
               Mikhail Kazakov
             </p>
             <p className="mt-2 text-sm text-[var(--foreground-muted)]">
@@ -73,7 +75,7 @@ export function Footer({
             <ul className="mt-3 space-y-2">
               <li>
                 <a
-                  href="https://chess.com"
+                  href={CHESSCOM_PROFILE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[var(--foreground-muted)] transition-colors hover:text-[var(--gold)]"
@@ -83,12 +85,20 @@ export function Footer({
               </li>
               <li>
                 <a
-                  href="https://lichess.org"
+                  href={FIDE_PROFILE_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-[var(--foreground-muted)] transition-colors hover:text-[var(--gold)]"
                 >
-                  Lichess
+                  FIDE
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="text-sm text-[var(--foreground-muted)] transition-colors hover:text-[var(--gold)]"
+                >
+                  {CONTACT_EMAIL}
                 </a>
               </li>
             </ul>

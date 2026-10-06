@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
         ``,
         `Date: ${dateStr}`,
         `Time: ${timeStr}`,
-        `Duration: 90 minutes`,
+        `Duration: 60–90 minutes`,
         ``,
         `Mikhail will send you the Zoom/Teams link shortly.`,
         ``,

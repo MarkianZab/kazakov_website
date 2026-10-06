@@ -1,18 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import type { Locale } from "@/lib/locales";
+import type { Dictionary } from "@/dictionaries/fr";
 
-type NavDict = {
-  home: string;
-  about: string;
-  availability: string;
-  contact: string;
-  book: string;
-};
+type NavDict = Dictionary["nav"];
 
 export function Navbar({ dict, locale }: { dict: NavDict; locale: Locale }) {
   const pathname = usePathname();
@@ -35,8 +31,16 @@ export function Navbar({ dict, locale }: { dict: NavDict; locale: Locale }) {
         <div className="flex h-16 items-center justify-between">
           <Link
             href={base}
-            className="font-serif text-lg font-semibold tracking-wide text-[var(--gold)]"
+            className="flex items-center gap-2.5 font-serif text-lg font-semibold tracking-wide text-[var(--gold)]"
           >
+            <Image
+              src="/images/logo.png"
+              alt=""
+              width={775}
+              height={532}
+              sizes="52px"
+              className="h-9 w-auto"
+            />
             M. Kazakov
           </Link>
 

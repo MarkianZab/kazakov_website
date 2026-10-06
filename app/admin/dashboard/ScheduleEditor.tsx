@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { addBookableSlot, deleteBookableSlot } from "../actions";
 
 export type BookableSlot = {
@@ -31,15 +31,25 @@ function formatDate(dateStr: string) {
 
 export function ScheduleEditor({ slots: initial }: { slots: BookableSlot[] }) {
   const [slots, setSlots] = useState<BookableSlot[]>(initial);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [showAdd, setShowAdd] = useState(false);
   const [newDate, setNewDate] = useState("");
   const [newHour, setNewHour] = useState(10);
 
   const today = new Date().toISOString().split("T")[0];
 
-  function handleAdd() {
+  function sortSlots(list: BookableSlot[]) {
+    return [...list].sort((a, b) =>
+      a.slot_date === b.slot_date
+        ? a.slot_hour - b.slot_hour
+        : a.slot_date.localeCompare(b.slot_date)
+    );
+  }
+
+  async function handleAdd() {
     if (!newDate || newDate < today) return;
+    setSaveError("");
     const tempId = `temp-${Date.now()}`;
     const newSlot: BookableSlot = {
       id: tempId,
@@ -49,21 +59,31 @@ export function ScheduleEditor({ slots: initial }: { slots: BookableSlot[] }) {
       student_name: null,
       student_email: null,
     };
-    setSlots((prev) =>
-      [...prev, newSlot].sort((a, b) =>
-        a.slot_date === b.slot_date
-          ? a.slot_hour - b.slot_hour
-          : a.slot_date.localeCompare(b.slot_date)
-      )
-    );
+    setSlots((prev) => sortSlots([...prev, newSlot]));
     setShowAdd(false);
     setNewDate("");
-    startTransition(() => addBookableSlot(newDate, newHour));
+    setIsPending(true);
+    try {
+      await addBookableSlot(newSlot.slot_date, newSlot.slot_hour);
+    } catch (err) {
+      setSlots((prev) => prev.filter((s) => s.id !== tempId));
+      setSaveError(err instanceof Error ? err.message : "Failed to save slot. Please try again.");
+      setShowAdd(true);
+    } finally {
+      setIsPending(false);
+    }
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
+    setSaveError("");
+    const removed = slots.find((s) => s.id === id);
     setSlots((prev) => prev.filter((s) => s.id !== id));
-    startTransition(() => deleteBookableSlot(id));
+    try {
+      await deleteBookableSlot(id);
+    } catch (err) {
+      if (removed) setSlots((prev) => sortSlots([...prev, removed]));
+      setSaveError(err instanceof Error ? err.message : "Failed to delete slot. Please try again.");
+    }
   }
 
   const upcoming = slots.filter((s) => s.slot_date >= today && !s.booked);
@@ -127,6 +147,10 @@ export function ScheduleEditor({ slots: initial }: { slots: BookableSlot[] }) {
               Cancel
             </button>
           </div>
+        )}
+
+        {saveError && (
+          <p className="mb-3 rounded-md bg-red-900/30 px-4 py-3 text-sm text-red-400">{saveError}</p>
         )}
 
         {upcoming.length === 0 ? (

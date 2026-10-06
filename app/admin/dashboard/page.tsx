@@ -1,4 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { isAdminEmail } from "@/lib/admin";
+import { redirect } from "next/navigation";
 import { ScheduleEditor } from "./ScheduleEditor";
 import { SettingsForm } from "./SettingsForm";
 import { BookingsTable } from "./BookingsTable";
@@ -10,6 +12,12 @@ export const metadata: Metadata = { title: "Admin Dashboard — Kazakov Chess" }
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServerClient();
+
+  // Defense in depth: never render student PII on trust of the proxy alone.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!isAdminEmail(user?.email)) redirect("/admin/login");
 
   const today = new Date().toISOString().split("T")[0];
 
