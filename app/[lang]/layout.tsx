@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HtmlLang } from "@/components/HtmlLang";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
-import { getDictionary, hasLocale, type Locale } from "./dictionaries";
+import { getDictionary, hasLocale, locales, type Locale } from "./dictionaries";
 import type { Metadata } from "next";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  return [{ lang: "fr" }, { lang: "en" }];
+  return locales.map((lang) => ({ lang }));
 }
 
 export async function generateMetadata({
