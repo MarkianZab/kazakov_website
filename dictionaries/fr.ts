@@ -1,3 +1,5 @@
+import type { ServiceId } from "@/lib/services";
+
 const fr = {
   nav: {
     home: "Accueil",
@@ -109,47 +111,46 @@ const fr = {
   booking: {
     label: "Réservation",
     title: "Réserver une session",
-    subtitle: "Choisissez un créneau disponible et réservez en quelques secondes.",
+    subtitle: "Choisissez une séance, un créneau, c'est réservé.",
     firstFreeHeadline: "Première leçon gratuite",
     firstFreeSub: "Aucun paiement requis. Réservez, rencontrez Mikhail, et décidez ensuite.",
-    sessionName: "Leçon privée individuelle",
-    sessionDetails: "60–90 minutes · Zoom ou Microsoft Teams",
-    sessionPrice: "50 €",
-    sessionDesc: "Session personnalisée adaptée à votre niveau et vos objectifs. Mikhail vous enverra le lien Zoom/Teams après confirmation.",
     prepNote:
       "Pour la première leçon, préparez quelques-unes de vos parties récentes : elles serviront de point de départ à votre programme d'entraînement.",
-    slotsTitle: "Créneaux disponibles",
-    noSlots: "Aucun créneau disponible pour le moment. Contactez Mikhail pour convenir d'un horaire.",
-    slotsError:
-      "Impossible de charger les créneaux pour le moment. Réessayez dans quelques instants ou contactez Mikhail directement.",
     contactMikhail: "Contacter Mikhail",
-    localTimeNote: "Horaires affichés en heure locale",
-    kyivNote: "Heure de Kyiv :",
-    selectPrompt: "Sélectionnez un créneau pour réserver",
     servicesTitle: "Formules et tarifs",
-    services: [
-      { name: "Leçon privée individuelle", detail: "60–90 min", price: "50 €" },
-      { name: "Partie d'entraînement avec analyse", detail: "", price: "50 €" },
-      { name: "Cours en groupe", detail: "60–90 min", price: "100 €" },
-      { name: "Simultanée", detail: "", price: "100 €" },
-      { name: "Accompagnement en tournoi", detail: "", price: "Sur accord" },
-    ],
+    services: {
+      private: {
+        name: "Leçon privée individuelle",
+        desc: "Session personnalisée adaptée à votre niveau et vos objectifs.",
+      },
+      training: {
+        name: "Partie d'entraînement avec analyse",
+        desc: "Jouez une partie contre Mikhail, puis analysez-la ensemble.",
+      },
+      group: {
+        name: "Cours en groupe",
+        desc: "Une leçon collective avec d'autres élèves.",
+      },
+      simul: {
+        name: "Simultanée",
+        desc: "Mikhail affronte plusieurs joueurs en même temps.",
+      },
+      tournament: {
+        name: "Accompagnement en tournoi",
+        desc: "Préparation des adversaires et analyse de vos parties pendant le tournoi.",
+      },
+    } satisfies Record<ServiceId, { name: string; desc: string }>,
+    choosePrompt: "Choisissez un type de séance pour voir les créneaux disponibles.",
+    contactOnlyNote: "Cette prestation s'organise directement avec Mikhail.",
+    durationByArrangement: "Durée à convenir",
+    priceCustom: "Sur accord",
+    timezoneNote:
+      "Les horaires sont affichés dans votre fuseau horaire. Les cours ont lieu sur Microsoft Teams ; le lien figure dans votre email de confirmation.",
+    cancelNote:
+      "Annulation gratuite à tout moment via le lien de votre email de confirmation.",
     paymentTitle: "Paiement",
     paymentText:
       "Le paiement s'effectue après votre première leçon gratuite, par PayPal ou carte bancaire (PrivatBank), en euros ou en dollars US.",
-    form: {
-      name: "Votre nom",
-      namePH: "Nom complet",
-      email: "Votre email",
-      confirm: "Confirmer la réservation",
-      confirming: "Confirmation…",
-      cancel: "Annuler",
-    },
-    success: {
-      title: "Session réservée !",
-      message: "Mikhail vous enverra le lien Zoom/Teams par email sous peu. À bientôt sur l'échiquier !",
-    },
-    slotTaken: "Ce créneau vient d'être réservé. Veuillez en choisir un autre.",
   },
   contact: {
     label: "Contact",

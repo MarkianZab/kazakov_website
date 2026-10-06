@@ -111,47 +111,46 @@ const en: Dictionary = {
   booking: {
     label: "Booking",
     title: "Book a Session",
-    subtitle: "Pick an available slot and book instantly.",
+    subtitle: "Choose a lesson, pick a time, done.",
     firstFreeHeadline: "First lesson is free",
     firstFreeSub: "No payment required. Book a session, meet Mikhail, and decide from there.",
-    sessionName: "1-on-1 Private Lesson",
-    sessionDetails: "60–90 minutes · Zoom or Microsoft Teams",
-    sessionPrice: "€50",
-    sessionDesc: "Personalised session tailored to your level and goals. Mikhail will send you the Zoom/Teams link after booking.",
     prepNote:
       "For your first lesson, have a few of your recent games ready — they are the starting point for your training plan.",
-    slotsTitle: "Available Slots",
-    noSlots: "No slots available right now. Contact Mikhail to arrange a time.",
-    slotsError:
-      "We couldn't load the schedule right now. Try again in a moment or contact Mikhail directly.",
     contactMikhail: "Contact Mikhail",
-    localTimeNote: "Times shown in your local timezone",
-    kyivNote: "Kyiv time:",
-    selectPrompt: "Select a slot to book",
     servicesTitle: "Sessions & Pricing",
-    services: [
-      { name: "1-on-1 Private Lesson", detail: "60–90 min", price: "€50" },
-      { name: "Training Game with Analysis", detail: "", price: "€50" },
-      { name: "Group Lesson", detail: "60–90 min", price: "€100" },
-      { name: "Simultaneous Exhibition", detail: "", price: "€100" },
-      { name: "Tournament Support", detail: "", price: "By agreement" },
-    ],
+    services: {
+      private: {
+        name: "1-on-1 Private Lesson",
+        desc: "Personalised session tailored to your level and goals.",
+      },
+      training: {
+        name: "Training Game with Analysis",
+        desc: "Play a game against Mikhail, then analyse it together.",
+      },
+      group: {
+        name: "Group Lesson",
+        desc: "A lesson together with other students.",
+      },
+      simul: {
+        name: "Simultaneous Exhibition",
+        desc: "Mikhail plays several opponents at the same time.",
+      },
+      tournament: {
+        name: "Tournament Support",
+        desc: "Opponent preparation and analysis of your games during the tournament.",
+      },
+    },
+    choosePrompt: "Choose a lesson type to see available times.",
+    contactOnlyNote: "This is arranged directly with Mikhail.",
+    durationByArrangement: "Duration by arrangement",
+    priceCustom: "By agreement",
+    timezoneNote:
+      "Times are shown in your time zone. Lessons take place on Microsoft Teams; the link is in your confirmation email.",
+    cancelNote:
+      "Free cancellation at any time using the link in your confirmation email.",
     paymentTitle: "Payment",
     paymentText:
       "Payment is collected after your free first lesson, by PayPal or bank card (PrivatBank), in euros or US dollars.",
-    form: {
-      name: "Your name",
-      namePH: "Full name",
-      email: "Your email",
-      confirm: "Confirm Booking",
-      confirming: "Confirming…",
-      cancel: "Cancel",
-    },
-    success: {
-      title: "Session booked!",
-      message: "Mikhail will send you the Zoom/Teams link by email shortly. See you on the board!",
-    },
-    slotTaken: "This slot was just taken. Please choose another.",
   },
   contact: {
     label: "Contact",
