@@ -11,12 +11,9 @@ import type { Metadata } from "next";
 
 type Props = { params: Promise<{ lang: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { lang } = await params;
-  return {
-    title: "Contact — Mikhail Kazakov",
-  };
-}
+export const metadata: Metadata = {
+  title: "Contact — Mikhail Kazakov",
+};
 
 export default async function ContactPage({ params }: Props) {
   const { lang } = await params;
