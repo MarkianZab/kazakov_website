@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/locales";
 
-export const CAL_USERNAME = "REPLACE_WITH_MIKHAILS_CAL_USERNAME";
+export const CAL_USERNAME = "mikhail-kazakov1";
 
 export type ServiceId = "private" | "training" | "group" | "simul" | "tournament";
 
