@@ -21,6 +21,7 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       email: (form.elements.namedItem("email") as HTMLInputElement).value,
       subject: (form.elements.namedItem("subject") as HTMLInputElement).value,
       message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+      website: (form.elements.namedItem("website") as HTMLInputElement).value,
     };
 
     try {
@@ -60,23 +61,33 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className={lbl}>{f.name}</label>
-          <input id="name" name="name" type="text" required className={inp} placeholder={f.namePH} />
+          <input id="name" name="name" type="text" required maxLength={100} className={inp} placeholder={f.namePH} />
         </div>
         <div>
           <label htmlFor="email" className={lbl}>{f.email}</label>
-          <input id="email" name="email" type="email" required className={inp} placeholder="you@example.com" />
+          <input id="email" name="email" type="email" required maxLength={200} className={inp} placeholder="you@example.com" />
         </div>
       </div>
 
       <div>
         <label htmlFor="subject" className={lbl}>{f.subject}</label>
-        <input id="subject" name="subject" type="text" required className={inp} placeholder={f.subjectPH} />
+        <input id="subject" name="subject" type="text" required maxLength={200} className={inp} placeholder={f.subjectPH} />
       </div>
 
       <div>
         <label htmlFor="message" className={lbl}>{f.message}</label>
-        <textarea id="message" name="message" rows={5} required className={inp} placeholder={f.messagePH} />
+        <textarea id="message" name="message" rows={5} required maxLength={5000} className={inp} placeholder={f.messagePH} />
       </div>
+
+      {/* Honeypot: hidden from people and assistive tech, so only bots fill it. */}
+      <input
+        name="website"
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="sr-only"
+      />
 
       {status === "error" && (
         <p className="rounded-md bg-red-900/30 px-4 py-3 text-sm text-red-400">
