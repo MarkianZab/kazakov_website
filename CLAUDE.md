@@ -15,7 +15,7 @@ A professional website for chess coach **Mikhail Kazakov** (grandmaster). The si
 | Booking | Cal.com (hosted, embedded inline) |
 | Payments | Off-site (PayPal, bank card), arranged after the free first lesson |
 | Email | Resend (contact form) |
-| Analytics | PostHog |
+| Analytics | Vercel Analytics (cookieless page views) |
 | Deployment | Vercel |
 | Domain | Porkbun |
 | Professional email | Google Workspace |
@@ -88,9 +88,7 @@ kazakov_website/
 │   ├── services.ts                 # Lesson types, durations, prices, Cal.com slugs
 │   ├── locales.ts
 │   ├── links.ts                    # Contact email, Chess.com and FIDE URLs
-│   ├── resend.ts
-│   └── posthog.ts                  # Server-side PostHog client
-├── instrumentation-client.ts       # PostHog browser init
+│   └── resend.ts
 ├── proxy.ts                        # Locale redirect (Next 16 name for middleware)
 └── docs/BOOKING_PLAN.md            # Cal.com migration plan and account setup
 ```
@@ -100,7 +98,7 @@ kazakov_website/
 ### Cal.com
 - Mikhail's hosted Cal.com account owns availability (date overrides), event types, booking rules, and confirmation and cancellation emails.
 - In `lib/services.ts`, `CAL_USERNAME` must be his Cal.com username, each `calSlug` an event type slug, and each `durationMin` that event's length.
-- `app/[lang]/booking/CalBooker.tsx` embeds one event type with `@calcom/embed-react` and sends `lesson_booked` to PostHog when Cal.com reports a booking.
+- `app/[lang]/booking/CalBooker.tsx` embeds one event type with `@calcom/embed-react`.
 - Account setup steps: "Cal.com setup with Mikhail" in `docs/BOOKING_PLAN.md`.
 
 ### Resend
@@ -109,10 +107,10 @@ kazakov_website/
 - Env vars: `RESEND_API_KEY`, `COACH_EMAIL`, `RESEND_FROM_EMAIL` (optional, defaults to `onboarding@resend.dev`).
 - Until a domain is verified in Resend, `COACH_EMAIL` must be the Resend account owner's address.
 
-### PostHog
-- Initialized in `instrumentation-client.ts`; browser traffic goes through the `/ingest` rewrite in `next.config.ts`.
-- Track page views and key events: `service_selected`, `lesson_booked`, `contact_submitted`.
-- Env vars: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`.
+### Vercel Analytics
+- `<Analytics />` from `@vercel/analytics/next` in `app/layout.tsx` records page views without cookies. No custom events, no env vars.
+- Web Analytics must be turned on in the Vercel project settings; it records nothing in development.
+- `proxy.ts` skips `/_vercel` so the analytics script and its beacons are not locale-redirected.
 
 ## Component Conventions
 

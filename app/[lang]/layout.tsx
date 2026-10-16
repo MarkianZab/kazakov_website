@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HtmlLang } from "@/components/HtmlLang";
-import { PostHogProvider } from "@/components/providers/PostHogProvider";
 import { getDictionary, hasLocale, locales, type Locale } from "./dictionaries";
 import type { Metadata } from "next";
 
@@ -54,11 +53,11 @@ export default async function LocaleLayout({ children, params }: Props) {
   const dict = await getDictionary(lang as Locale);
 
   return (
-    <PostHogProvider>
+    <>
       <HtmlLang lang={lang} />
       <Navbar dict={dict.nav} locale={lang as Locale} />
       <main className="flex-1">{children}</main>
       <Footer dict={dict.footer} nav={dict.nav} locale={lang as Locale} />
-    </PostHogProvider>
+    </>
   );
 }

@@ -46,7 +46,7 @@
 
 2. In `app/api/contact/route.ts`, before sending: if `COACH_EMAIL` is missing, `console.error` it and return `{ error: "Email is not configured." }` with status 500. Never fall back to sending to the sender address (the current fallback is why mail silently went nowhere).
 3. Keep `replyTo: email` so Mikhail can reply straight to the student.
-4. Keep the existing error handling and PostHog capture.
+4. Keep the existing error handling.
 
 **Done when:** with `COACH_EMAIL` set to the Resend account owner's email in `.env.local`, submitting the form on `/fr/contact` and `/en/contact` puts a message in that inbox, and hitting reply goes to the student's address.
 
@@ -97,7 +97,6 @@ export const calLinkFor = (s: Service) =>
 
 import Cal, { getCalApi } from "@calcom/embed-react";
 import { useEffect } from "react";
-import posthog from "posthog-js";
 
 export function CalBooker({ calLink, serviceId }: { calLink: string; serviceId: string }) {
   const namespace = `book-${serviceId}`;
@@ -113,20 +112,11 @@ export function CalBooker({ calLink, serviceId }: { calLink: string; serviceId: 
         hideEventTypeDetails: true, // our page already shows name, duration, price
         styles: { branding: { brandColor: "#c9a84c" } },
       });
-      cal("on", {
-        action: "bookingSuccessfulV2",
-        callback: (e) => {
-          posthog.capture("lesson_booked", {
-            service: serviceId,
-            start_time: e.detail.data.startTime,
-          });
-        },
-      });
     })();
     return () => {
       cancelled = true;
     };
-  }, [namespace, serviceId]);
+  }, [namespace]);
 
   return (
     <Cal
@@ -148,7 +138,6 @@ export function CalBooker({ calLink, serviceId }: { calLink: string; serviceId: 
 * When a bookable service is selected: show a heading like "1 on 1 lesson · 60 min · €50", then `<CalBooker key={service.id} calLink=... serviceId=... />` inside a container with a fixed minimum height (about 650px) so the page doesn't jump while the iframe loads. `key` forces a fresh embed per service. Smooth scroll the container into view.
 * When `simul` or `tournament` is selected: show `dict.contactOnlyNote` and a `LinkButton` to `contactHref` with `dict.contactMikhail`.
 * Show `dict.timezoneNote` under the calendar (Cal.com shows times in the student's own time zone, with a zone picker).
-* `posthog.capture("service_selected", { service: id })` on click.
 
 **Edit:** `app/[lang]/booking/page.tsx`
 
@@ -159,7 +148,7 @@ export function CalBooker({ calLink, serviceId }: { calLink: string; serviceId: 
 
 **Delete:** `app/[lang]/booking/SlotPicker.tsx`.
 
-**Done when:** `/fr/booking` and `/en/booking` show five cards; clicking 1 on 1 shows its calendar with Mikhail's open hours; switching to Group lesson swaps the calendar; Simul shows the contact button; a test booking completes inside the page and fires `lesson_booked` in PostHog.
+**Done when:** `/fr/booking` and `/en/booking` show five cards; clicking 1 on 1 shows its calendar with Mikhail's open hours; switching to Group lesson swaps the calendar; Simul shows the contact button; a test booking completes inside the page.
 
 ---
 
@@ -210,7 +199,7 @@ Change both files identically in structure. `Dictionary` is typed from `fr.ts`, 
 
 **Uninstall:** `npm uninstall @supabase/ssr @supabase/supabase-js stripe @stripe/stripe-js next-intl`
 
-**Then:** search the whole repo for `supabase`, `stripe`, `SESSION_TYPES`, `bookable_slots`, `admin`, and remove any remaining references (including in `posthog-setup-report.md` if it describes deleted events).
+**Then:** search the whole repo for `supabase`, `stripe`, `SESSION_TYPES`, `bookable_slots`, `admin`, and remove any remaining references.
 
 **Update docs:** in `README.md` and `CLAUDE.md`, remove Supabase and Stripe from the stack, add "Cal.com (embedded booking)", and list the env vars that are still used (below).
 
@@ -229,13 +218,13 @@ Run `npm run lint` and `npm run build`, then `npm run start` and check by hand:
 * [ ] Booking on a phone width (375px): cards stack, calendar is usable, no horizontal scroll.
 * [ ] One real test booking per service lands in Mikhail's Google Calendar with the Teams link, then cancel it from the email.
 * [ ] Contact form message arrives.
-* [ ] PostHog shows `service_selected`, `lesson_booked`, `contact_submitted`.
+* [ ] Vercel Analytics shows page views (Web Analytics turned on in the Vercel project).
 
 ---
 
 ## Environment variables
 
-**Keep in Vercel:** `RESEND_API_KEY`, `COACH_EMAIL`, `RESEND_FROM_EMAIL` (optional until domain), `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`.
+**Keep in Vercel:** `RESEND_API_KEY`, `COACH_EMAIL`, `RESEND_FROM_EMAIL` (optional until domain).
 
 **Remove from Vercel after Task 6 is deployed:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`. Then roll the Stripe keys in the Stripe dashboard and pause the Supabase project (delete it a couple of weeks later).
 

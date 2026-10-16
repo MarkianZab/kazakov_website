@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import posthog from "posthog-js";
 import { LinkButton } from "@/components/ui/Button";
 import { SERVICES, calLinkFor, formatPrice, type ServiceId } from "@/lib/services";
 import type { Locale } from "@/lib/locales";
@@ -32,11 +31,6 @@ export function ServicePicker({
     });
   }, [selectedId]);
 
-  function select(id: ServiceId) {
-    setSelectedId(id);
-    posthog.capture("service_selected", { service: id });
-  }
-
   const duration = (min: number | null) => (min ? `${min} min` : dict.durationByArrangement);
   const price = (eur: number | null) => (eur === null ? dict.priceCustom : formatPrice(eur, lang));
 
@@ -51,7 +45,7 @@ export function ServicePicker({
               key={s.id}
               type="button"
               aria-pressed={isSelected}
-              onClick={() => select(s.id)}
+              onClick={() => setSelectedId(s.id)}
               className={`flex flex-col rounded-md border p-5 text-left transition-all ${
                 isSelected
                   ? "border-[var(--gold)] bg-[var(--gold)]/15"
