@@ -2,21 +2,18 @@ import { notFound } from "next/navigation";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { getDictionary, hasLocale, type Locale } from "../dictionaries";
 import { ContactForm } from "./ContactForm";
+import {
+  CHESSCOM_PROFILE_URL,
+  CONTACT_EMAIL,
+  FIDE_PROFILE_URL,
+} from "@/lib/links";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ lang: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { lang } = await params;
-  return {
-    title:
-      lang === "fr"
-        ? "Contact — Mikhail Kazakov"
-        : lang === "uk"
-          ? "Контакт — Mikhail Kazakov"
-          : "Contact — Mikhail Kazakov",
-  };
-}
+export const metadata: Metadata = {
+  title: "Contact — Mikhail Kazakov",
+};
 
 export default async function ContactPage({ params }: Props) {
   const { lang } = await params;
@@ -36,10 +33,10 @@ export default async function ContactPage({ params }: Props) {
               {d.emailLabel}
             </p>
             <a
-              href="mailto:[PLACEHOLDER: mikhail@yourdomain.com]"
+              href={`mailto:${CONTACT_EMAIL}`}
               className="mt-1 block text-[var(--gold)] hover:text-[var(--gold-hover)]"
             >
-              [PLACEHOLDER: mikhail@yourdomain.com]
+              {CONTACT_EMAIL}
             </a>
           </div>
 
@@ -58,7 +55,7 @@ export default async function ContactPage({ params }: Props) {
             </p>
             <div className="mt-2 flex flex-col gap-1.5">
               <a
-                href="https://chess.com"
+                href={CHESSCOM_PROFILE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-[var(--foreground-muted)] hover:text-[var(--gold)]"
@@ -66,15 +63,7 @@ export default async function ContactPage({ params }: Props) {
                 Chess.com →
               </a>
               <a
-                href="https://lichess.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-[var(--foreground-muted)] hover:text-[var(--gold)]"
-              >
-                Lichess →
-              </a>
-              <a
-                href="https://ratings.fide.com"
+                href={FIDE_PROFILE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-[var(--foreground-muted)] hover:text-[var(--gold)]"
@@ -86,7 +75,7 @@ export default async function ContactPage({ params }: Props) {
         </div>
 
         <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-6">
-          <ContactForm dict={d} />
+          <ContactForm dict={d} privacyHref={`/${lang}/privacy`} />
         </div>
       </div>
     </div>

@@ -1,13 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import posthog from "posthog-js";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/dictionaries/fr";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
+export function ContactForm({
+  dict,
+  privacyHref,
+}: {
+  dict: Dictionary["contact"];
+  privacyHref: string;
+}) {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -22,6 +28,7 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       email: (form.elements.namedItem("email") as HTMLInputElement).value,
       subject: (form.elements.namedItem("subject") as HTMLInputElement).value,
       message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+      website: (form.elements.namedItem("website") as HTMLInputElement).value,
     };
 
     try {
@@ -32,12 +39,9 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Something went wrong.");
-      posthog.capture("contact_submitted");
       setStatus("success");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Something went wrong.";
-      posthog.capture("contact_submission_failed", { error: message });
-      posthog.captureException(err);
       setErrorMsg(message);
       setStatus("error");
     }
@@ -64,23 +68,33 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className={lbl}>{f.name}</label>
-          <input id="name" name="name" type="text" required className={inp} placeholder={f.namePH} />
+          <input id="name" name="name" type="text" required maxLength={100} className={inp} placeholder={f.namePH} />
         </div>
         <div>
           <label htmlFor="email" className={lbl}>{f.email}</label>
-          <input id="email" name="email" type="email" required className={inp} placeholder="you@example.com" />
+          <input id="email" name="email" type="email" required maxLength={200} className={inp} placeholder="you@example.com" />
         </div>
       </div>
 
       <div>
         <label htmlFor="subject" className={lbl}>{f.subject}</label>
-        <input id="subject" name="subject" type="text" required className={inp} placeholder={f.subjectPH} />
+        <input id="subject" name="subject" type="text" required maxLength={200} className={inp} placeholder={f.subjectPH} />
       </div>
 
       <div>
         <label htmlFor="message" className={lbl}>{f.message}</label>
-        <textarea id="message" name="message" rows={5} required className={inp} placeholder={f.messagePH} />
+        <textarea id="message" name="message" rows={5} required maxLength={5000} className={inp} placeholder={f.messagePH} />
       </div>
+
+      {/* Honeypot: hidden from people and assistive tech, so only bots fill it. */}
+      <input
+        name="website"
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="sr-only"
+      />
 
       {status === "error" && (
         <p className="rounded-md bg-red-900/30 px-4 py-3 text-sm text-red-400">
@@ -91,6 +105,14 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       <Button type="submit" size="lg" disabled={status === "loading"} className="w-full">
         {status === "loading" ? f.sending : f.submit}
       </Button>
+
+      <p className="text-center text-xs text-[var(--foreground-muted)]">
+        {dict.privacyNote}{" "}
+        <Link href={privacyHref} className="text-[var(--gold)] hover:text-[var(--gold-hover)]">
+          {dict.privacyLink}
+        </Link>
+        .
+      </p>
     </form>
   );
 }

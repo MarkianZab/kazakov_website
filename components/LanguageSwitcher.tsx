@@ -5,12 +5,16 @@ import { locales, type Locale } from "@/lib/locales";
 
 const labels: Record<Locale, string> = { fr: "FR", en: "EN" };
 
+function persistLocale(locale: Locale) {
+  document.cookie = `NEXT_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+}
+
 export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
   const pathname = usePathname();
   const router = useRouter();
 
   function switchLocale(newLocale: Locale) {
-    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+    persistLocale(newLocale);
     const segments = pathname.split("/");
     segments[1] = newLocale;
     router.push(segments.join("/"));
