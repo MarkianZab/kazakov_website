@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { LinkButton } from "@/components/ui/Button";
 import { SERVICES, calLinkFor, formatPrice, type ServiceId } from "@/lib/services";
 import type { Locale } from "@/lib/locales";
@@ -11,10 +12,12 @@ export function ServicePicker({
   dict,
   lang,
   contactHref,
+  privacyHref,
 }: {
   dict: Dictionary["booking"];
   lang: Locale;
   contactHref: string;
+  privacyHref: string;
 }) {
   const [selectedId, setSelectedId] = useState<ServiceId | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -96,6 +99,13 @@ export function ServicePicker({
                 <p>{dict.cancelNote}</p>
                 <p>♟ {dict.prepNote}</p>
               </div>
+              <p className="mt-4 text-xs text-[var(--foreground-muted)]">
+                {dict.privacyNote}{" "}
+                <Link href={privacyHref} className="text-[var(--gold)] hover:text-[var(--gold-hover)]">
+                  {dict.privacyLink}
+                </Link>
+                .
+              </p>
             </>
           ) : (
             <div className="mt-6 rounded-md border border-[var(--border)] bg-[var(--surface)] p-8 text-center">

@@ -12,6 +12,7 @@ const en: Dictionary = {
     navigation: "Navigation",
     findMe: "Find Me",
     rights: "All rights reserved.",
+    privacy: "Privacy",
   },
   home: {
     badge: "FIDE Grandmaster",
@@ -151,6 +152,8 @@ const en: Dictionary = {
     paymentTitle: "Payment",
     paymentText:
       "Payment is collected after your free first lesson, by PayPal or bank card (PrivatBank), in euros or US dollars.",
+    privacyNote: "Bookings are handled by Cal.com.",
+    privacyLink: "See the privacy policy",
   },
   contact: {
     label: "Contact",
@@ -176,6 +179,87 @@ const en: Dictionary = {
       title: "Message sent!",
       message: "Mikhail will get back to you within 24 hours.",
     },
+    privacyNote: "Your details are only used to reply to your message.",
+    privacyLink: "See the privacy policy",
+  },
+  privacy: {
+    metaTitle: "Privacy policy, Mikhail Kazakov",
+    metaDescription:
+      "How Mikhail Kazakov collects, uses and protects the data sent through this site, and how to exercise your rights.",
+    label: "Privacy",
+    title: "Privacy policy",
+    updated: "Last updated: November 2026",
+    sections: [
+      {
+        title: "1. Who is responsible",
+        paragraphs: [
+          "The controller of the data collected on this site is Mikhail Kazakov, International Grandmaster and chess coach. Contact: chessline@ukr.net.",
+        ],
+      },
+      {
+        title: "2. What is collected and why",
+        items: [
+          "Contact form: name, email address, subject and message. These are used only to reply to your request. They are sent by email to Mikhail Kazakov and are not stored in a database on this site.",
+          "Lesson booking: name, email address, preferred contact method (Telegram, WhatsApp or email) and the matching handle, rating and platform, whether it is your first lesson, any notes, and the date and time you choose. These are used to organise the lesson and to contact you about it.",
+          "Visit statistics: the site uses Vercel Web Analytics, which measures traffic (page views, countries, where visits come from) in aggregate, without cookies and without identifying you personally.",
+        ],
+      },
+      {
+        title: "3. Legal basis",
+        items: [
+          "Bookings and lesson enquiries: steps prior to a contract and performance of the contract (GDPR Article 6(1)(b)).",
+          "Other contact form messages: legitimate interest in answering your enquiries (GDPR Article 6(1)(f)).",
+          "Anonymous visit statistics: legitimate interest in understanding how the site is used (GDPR Article 6(1)(f)).",
+        ],
+      },
+      {
+        title: "4. Service providers",
+        paragraphs: [
+          "Your data is processed only by the providers needed to run the site and the lessons:",
+        ],
+        items: [
+          "Vercel Inc. (United States): website hosting and visit statistics.",
+          "Resend (United States): delivery of contact form messages.",
+          "Cal.com, Inc. (United States): booking management and confirmation emails.",
+          "Google: calendar where booked lessons are recorded.",
+          "Microsoft Teams: video calls for online lessons.",
+          "ukr.net (Ukraine): the email inbox where Mikhail Kazakov receives messages.",
+        ],
+        closing: ["Your data is never sold or used for advertising."],
+      },
+      {
+        title: "5. Transfers outside the European Union",
+        paragraphs: [
+          "Some of these providers are located in the United States or Ukraine. Transfers to the United States rely on the safeguards these providers offer, in particular the European Commission's standard contractual clauses or the EU and US Data Privacy Framework where it applies.",
+        ],
+      },
+      {
+        title: "6. How long data is kept",
+        items: [
+          "Contact form messages: kept as long as needed to reply and follow up, then deleted no later than 3 years after the last exchange.",
+          "Booking information: kept for as long as you take lessons, then deleted no later than 3 years after the last lesson.",
+        ],
+      },
+      {
+        title: "7. Cookies",
+        paragraphs: [
+          'This site uses no advertising or audience measurement cookies. It only stores your language choice (the "NEXT_LOCALE" cookie, kept for one year), which the site needs to work. The booking tool provided by Cal.com may use cookies strictly necessary for making an appointment.',
+        ],
+      },
+      {
+        title: "8. Your rights",
+        paragraphs: [
+          "You have the right to access, correct, delete, restrict, object to the processing of, and receive a copy of your data. To exercise these rights, write to chessline@ukr.net. You will receive a reply within one month.",
+          "If you believe your rights have not been respected, you can lodge a complaint with the CNIL (www.cnil.fr) or with the data protection authority in your country.",
+        ],
+      },
+      {
+        title: "9. Changes",
+        paragraphs: [
+          "This policy may be updated. The date of the last update is shown at the top of this page.",
+        ],
+      },
+    ],
   },
 };
 

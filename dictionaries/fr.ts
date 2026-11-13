@@ -1,5 +1,13 @@
 import type { ServiceId } from "@/lib/services";
 
+type PrivacySection = {
+  title: string;
+  paragraphs?: string[];
+  items?: string[];
+  // Paragraphs shown after the list.
+  closing?: string[];
+};
+
 const fr = {
   nav: {
     home: "Accueil",
@@ -12,6 +20,7 @@ const fr = {
     navigation: "Navigation",
     findMe: "Me retrouver",
     rights: "Tous droits réservés.",
+    privacy: "Confidentialité",
   },
   home: {
     badge: "Grand Maître FIDE",
@@ -151,6 +160,8 @@ const fr = {
     paymentTitle: "Paiement",
     paymentText:
       "Le paiement s'effectue après votre première leçon gratuite, par PayPal ou carte bancaire (PrivatBank), en euros ou en dollars US.",
+    privacyNote: "Les réservations sont gérées par Cal.com.",
+    privacyLink: "Voir la politique de confidentialité",
   },
   contact: {
     label: "Contact",
@@ -176,6 +187,87 @@ const fr = {
       title: "Message envoyé !",
       message: "Mikhail vous répondra sous 24 heures.",
     },
+    privacyNote: "Vos données servent uniquement à répondre à votre message.",
+    privacyLink: "Voir la politique de confidentialité",
+  },
+  privacy: {
+    metaTitle: "Politique de confidentialité, Mikhail Kazakov",
+    metaDescription:
+      "Comment Mikhail Kazakov collecte, utilise et protège les données envoyées via ce site, et comment exercer vos droits.",
+    label: "Confidentialité",
+    title: "Politique de confidentialité",
+    updated: "Dernière mise à jour : novembre 2026",
+    sections: [
+      {
+        title: "1. Responsable du traitement",
+        paragraphs: [
+          "Le responsable du traitement des données collectées sur ce site est Mikhail Kazakov, Grand Maître International et entraîneur d'échecs. Contact : chessline@ukr.net.",
+        ],
+      },
+      {
+        title: "2. Données collectées et utilisation",
+        items: [
+          "Formulaire de contact : nom, adresse email, sujet et message. Ces informations servent uniquement à répondre à votre demande. Elles sont transmises par email à Mikhail Kazakov et ne sont pas enregistrées dans une base de données sur ce site.",
+          "Réservation d'un cours : nom, adresse email, moyen de contact préféré (Telegram, WhatsApp ou email) et identifiant correspondant, classement et plateforme, indication s'il s'agit de votre premier cours, notes éventuelles, ainsi que la date et l'heure choisies. Ces informations servent à organiser le cours et à vous contacter à son sujet.",
+          "Statistiques de visite : le site utilise Vercel Web Analytics, qui mesure la fréquentation (pages vues, pays, provenance des visites) de manière agrégée, sans cookies et sans vous identifier personnellement.",
+        ],
+      },
+      {
+        title: "3. Bases légales",
+        items: [
+          "Réservation et demandes liées à un cours : mesures précontractuelles et exécution du contrat (article 6.1.b du RGPD).",
+          "Autres messages via le formulaire de contact : intérêt légitime à répondre à vos demandes (article 6.1.f du RGPD).",
+          "Statistiques de visite anonymes : intérêt légitime à comprendre l'utilisation du site (article 6.1.f du RGPD).",
+        ],
+      },
+      {
+        title: "4. Prestataires",
+        paragraphs: [
+          "Vos données sont traitées uniquement par les prestataires nécessaires au fonctionnement du site et des cours :",
+        ],
+        items: [
+          "Vercel Inc. (États-Unis) : hébergement du site et statistiques de visite.",
+          "Resend (États-Unis) : envoi des messages du formulaire de contact.",
+          "Cal.com, Inc. (États-Unis) : gestion des réservations et emails de confirmation.",
+          "Google : calendrier dans lequel les cours réservés sont enregistrés.",
+          "Microsoft Teams : visioconférence pour les cours en ligne.",
+          "ukr.net (Ukraine) : boîte email où Mikhail Kazakov reçoit les messages.",
+        ],
+        closing: ["Vos données ne sont jamais vendues ni utilisées à des fins publicitaires."],
+      },
+      {
+        title: "5. Transferts hors de l'Union européenne",
+        paragraphs: [
+          "Certains de ces prestataires sont situés aux États-Unis ou en Ukraine. Les transferts vers les États-Unis s'appuient sur les garanties proposées par ces prestataires, notamment les clauses contractuelles types de la Commission européenne ou le cadre de protection des données UE et États-Unis lorsqu'il s'applique.",
+        ],
+      },
+      {
+        title: "6. Durée de conservation",
+        items: [
+          "Messages du formulaire de contact : conservés le temps nécessaire pour répondre et assurer le suivi, puis supprimés au plus tard 3 ans après le dernier échange.",
+          "Informations de réservation : conservées pendant la durée de vos cours, puis supprimées au plus tard 3 ans après le dernier cours.",
+        ],
+      },
+      {
+        title: "7. Cookies",
+        paragraphs: [
+          "Ce site n'utilise ni cookies publicitaires ni cookies de mesure d'audience. Il enregistre uniquement votre choix de langue (cookie « NEXT_LOCALE », conservé un an), nécessaire au fonctionnement du site. Le module de réservation fourni par Cal.com peut utiliser des cookies strictement nécessaires à la prise de rendez-vous.",
+        ],
+      },
+      {
+        title: "8. Vos droits",
+        paragraphs: [
+          "Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, d'opposition et de portabilité de vos données. Pour exercer ces droits, écrivez à chessline@ukr.net. Une réponse vous sera apportée dans un délai d'un mois.",
+          "Si vous estimez que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de la CNIL (www.cnil.fr) ou de l'autorité de protection des données de votre pays.",
+        ],
+      },
+      {
+        title: "9. Modifications",
+        paragraphs: [
+          "Cette politique peut être mise à jour. La date de dernière mise à jour figure en haut de cette page.",
+        ],
+      },
+    ] satisfies PrivacySection[],
   },
 };
 

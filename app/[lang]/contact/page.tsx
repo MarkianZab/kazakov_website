@@ -75,7 +75,7 @@ export default async function ContactPage({ params }: Props) {
         </div>
 
         <div className="rounded-md border border-[var(--border)] bg-[var(--surface)] p-6">
-          <ContactForm dict={d} />
+          <ContactForm dict={d} privacyHref={`/${lang}/privacy`} />
         </div>
       </div>
     </div>

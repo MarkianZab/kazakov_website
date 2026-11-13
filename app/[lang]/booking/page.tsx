@@ -42,7 +42,12 @@ export default async function BookingPage({ params }: Props) {
         <h2 className="mb-6 font-serif text-xl font-semibold text-[var(--foreground)]">
           {d.servicesTitle}
         </h2>
-        <ServicePicker dict={d} lang={lang} contactHref={`/${lang}/contact`} />
+        <ServicePicker
+          dict={d}
+          lang={lang}
+          contactHref={`/${lang}/contact`}
+          privacyHref={`/${lang}/privacy`}
+        />
       </div>
 
       {/* Payment */}

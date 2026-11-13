@@ -105,8 +105,16 @@ export function Footer({
           </div>
         </div>
 
-        <div className="mt-8 border-t border-[var(--border)] pt-6 text-center text-xs text-[var(--foreground-muted)]">
-          © {new Date().getFullYear()} Mikhail Kazakov. {dict.rights}
+        <div className="mt-8 flex flex-wrap justify-center gap-x-4 gap-y-1 border-t border-[var(--border)] pt-6 text-center text-xs text-[var(--foreground-muted)]">
+          <p>
+            © {new Date().getFullYear()} Mikhail Kazakov. {dict.rights}
+          </p>
+          <Link
+            href={`${base}/privacy`}
+            className="underline underline-offset-2 transition-colors hover:text-[var(--gold)]"
+          >
+            {dict.privacy}
+          </Link>
         </div>
       </div>
     </footer>

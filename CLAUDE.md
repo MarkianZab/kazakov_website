@@ -67,6 +67,11 @@ Every page lives under `/[lang]` (`fr`, `en`); `proxy.ts` redirects bare paths u
 - Display professional email (Google Workspace)
 - Social/chess platform links: Chess.com, Lichess, FIDE profile
 
+### `/privacy` — Privacy policy
+- GDPR privacy policy; all text lives under `privacy` in the dictionaries.
+- Linked from the footer, under the contact form, and under the Cal.com calendar.
+- When a provider, collected field or cookie changes, update the policy text and its `updated` date in both languages.
+
 ## Project Structure
 
 ```
@@ -80,7 +85,8 @@ kazakov_website/
 │   │   ├── page.tsx                # Home / Hero
 │   │   ├── bio/page.tsx
 │   │   ├── booking/                # page, ServicePicker, CalBooker
-│   │   └── contact/                # page, ContactForm
+│   │   ├── contact/                # page, ContactForm
+│   │   └── privacy/page.tsx
 │   └── api/contact/route.ts        # Sends email via Resend
 ├── components/                     # Navbar, Footer, LanguageSwitcher, ui/
 ├── dictionaries/                   # fr.ts defines the Dictionary type; en.ts follows it

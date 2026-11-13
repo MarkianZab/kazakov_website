@@ -1,12 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import type { Dictionary } from "@/dictionaries/fr";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
+export function ContactForm({
+  dict,
+  privacyHref,
+}: {
+  dict: Dictionary["contact"];
+  privacyHref: string;
+}) {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -98,6 +105,14 @@ export function ContactForm({ dict }: { dict: Dictionary["contact"] }) {
       <Button type="submit" size="lg" disabled={status === "loading"} className="w-full">
         {status === "loading" ? f.sending : f.submit}
       </Button>
+
+      <p className="text-center text-xs text-[var(--foreground-muted)]">
+        {dict.privacyNote}{" "}
+        <Link href={privacyHref} className="text-[var(--gold)] hover:text-[var(--gold-hover)]">
+          {dict.privacyLink}
+        </Link>
+        .
+      </p>
     </form>
   );
 }
